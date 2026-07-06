@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍼 寶寶食光 · 副食品小廚房</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FFF7EC; --cream2:#FDEFDD; --ink:#5B4636; --ink-soft:#8A7563;
+  --peach:#FF8FA3; --peach-soft:#FFE3E8;
+  --butter:#F6C453; --butter-soft:#FFF1CC;
+  --mint:#7BC47F; --mint-soft:#E4F5E4;
+  --sky:#6EC1E4; --sky-soft:#DCF1FA;
+  --coral:#FF8A5B;
+  --card:#FFFFFF; --line:#F0E0CE;
+  --shadow:0 8px 22px rgba(150,110,70,.14);
+  --shadow-sm:0 3px 10px rgba(150,110,70,.12);
+  --radius:22px;
+  --font-disp:'Fredoka','PingFang TC','Noto Sans TC',system-ui,sans-serif;
+  --font-body:'Nunito','PingFang TC','Noto Sans TC',system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--font-body); color:var(--ink);
+  background:
+    radial-gradient(circle at 12% 18%, #FFE9C7 0, transparent 42%),
+    radial-gradient(circle at 88% 12%, var(--peach-soft) 0, transparent 40%),
+    radial-gradient(circle at 78% 88%, var(--sky-soft) 0, transparent 46%),
+    radial-gradient(circle at 20% 90%, var(--mint-soft) 0, transparent 44%),
+    var(--cream);
+  background-attachment:fixed;
+  min-height:100vh;
+}
+/* polka dot texture overlay */
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.5;
+  background-image:radial-gradient(rgba(200,150,90,.10) 1.4px, transparent 1.4px);
+  background-size:26px 26px;
+}
+.wrap{position:relative; z-index:1; max-width:1440px; margin:0 auto; padding:22px 24px 70px}
+
+/* ---------- header ---------- */
+header.top{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; margin-bottom:14px}
+.brand{display:flex; align-items:center; gap:12px}
+.brand .logo{font-size:40px; filter:drop-shadow(0 4px 6px rgba(0,0,0,.12)); animation:bob 3.5s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-6px) rotate(4deg)}}
+.brand h1{font-family:var(--font-disp); font-weight:700; font-size:30px; margin:0; letter-spacing:.5px}
+.brand p{margin:2px 0 0; font-size:13px; color:var(--ink-soft); font-weight:700}
+
+.tabs{display:flex; gap:8px; background:#fff; padding:7px; border-radius:999px; box-shadow:var(--shadow-sm)}
+.tab{border:none; background:transparent; font-family:var(--font-disp); font-weight:600; font-size:15px; color:var(--ink-soft);
+  padding:9px 18px; border-radius:999px; cursor:pointer; transition:.18s; display:flex; align-items:center; gap:7px}
+.tab:hover{color:var(--ink); transform:translateY(-1px)}
+.tab.active{color:#fff; background:linear-gradient(135deg,var(--peach),var(--coral)); box-shadow:0 6px 14px rgba(255,120,110,.4)}
+
+/* ---------- generic ---------- */
+.panel{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px 22px; border:2px solid #fff}
+.row{display:flex; align-items:center; gap:10px}
+.spacer{flex:1}
+button.btn{font-family:var(--font-disp); font-weight:600; border:none; cursor:pointer; border-radius:999px; padding:10px 18px; font-size:14px; transition:.16s; display:inline-flex; align-items:center; gap:7px}
+button.btn:active{transform:scale(.95)}
+.btn.primary{background:linear-gradient(135deg,var(--peach),var(--coral)); color:#fff; box-shadow:0 6px 14px rgba(255,120,110,.38)}
+.btn.primary:hover{transform:translateY(-2px)}
+.btn.ghost{background:var(--cream2); color:var(--ink)}
+.btn.ghost:hover{background:#FCE6CC}
+.btn.mint{background:var(--mint); color:#fff}
+.btn.sky{background:var(--sky); color:#fff}
+.btn.sm{padding:6px 12px; font-size:12.5px}
+.icon-btn{border:none;background:transparent;cursor:pointer;font-size:16px;line-height:1;padding:4px;border-radius:8px;color:var(--ink-soft)}
+.icon-btn:hover{background:var(--cream2);color:var(--ink)}
+
+.month-nav{display:flex; align-items:center; gap:6px}
+.month-nav .m{font-family:var(--font-disp); font-weight:700; font-size:22px; min-width:150px; text-align:center}
+.nav-btn{width:38px;height:38px;border-radius:50%;border:none;background:var(--cream2);cursor:pointer;font-size:18px;color:var(--ink);transition:.15s;font-weight:700}
+.nav-btn:hover{background:var(--peach-soft);transform:scale(1.08)}
+
+/* ---------- calendar ---------- */
+.cal-head{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin:14px 0 8px}
+.cal-head div{text-align:center;font-weight:800;font-size:13px;color:var(--ink-soft);font-family:var(--font-disp)}
+.cal-head div.sun{color:var(--peach)} .cal-head div.sat{color:var(--sky)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.cell{background:#FFFDF9;border:2px solid var(--line);border-radius:16px;min-height:104px;padding:8px 8px 6px;cursor:pointer;transition:.14s;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.cell:hover{border-color:var(--peach);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+.cell.empty{background:transparent;border:2px dashed #EFE2D0;cursor:default}
+.cell.empty:hover{transform:none;box-shadow:none;border-color:#EFE2D0}
+.cell.today{border-color:var(--coral);background:#FFF4EC}
+.cell .dnum{font-family:var(--font-disp);font-weight:700;font-size:15px;color:var(--ink-soft)}
+.cell.today .dnum{background:var(--coral);color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px}
+.cell .chips{margin-top:4px;display:flex;flex-direction:column;gap:3px;overflow:hidden}
+.mini{font-size:11px;font-weight:700;background:var(--cream2);border-radius:8px;padding:2px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+.mini .ml{opacity:.55;font-size:10px;margin-right:2px}
+.more{font-size:10.5px;color:var(--ink-soft);font-weight:700;margin-top:2px}
+.cell.drop-target.dragover{border-color:var(--mint);background:var(--mint-soft);transform:scale(1.02)}
+
+/* plan card in cell */
+.plancard{font-size:11px;font-weight:800;background:#fff;border:2px solid var(--butter);border-radius:9px;padding:2px 5px;display:flex;align-items:center;gap:3px;box-shadow:var(--shadow-sm)}
+.plancard .x{margin-left:auto;cursor:pointer;color:var(--ink-soft);font-weight:700}
+.cell-head{display:flex;align-items:center;justify-content:space-between;gap:4px;min-height:24px}
+.torec .btn{padding:3px 9px;font-size:11px}
+.cell.drop-target{overflow:visible;height:auto}
+
+/* ---------- fridge ---------- */
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px}
+.grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-top:12px}
+.cat-section{margin-top:22px}
+.cat-title{font-family:var(--font-disp);font-weight:700;font-size:17px;display:flex;align-items:center;gap:8px;padding-bottom:7px;border-bottom:2px dashed var(--line)}
+.cat-title .cat-count{font-size:12px;background:#fff;border:2px solid currentColor;border-radius:999px;padding:1px 9px;font-weight:800}
+.foodcard{background:#fff;border-radius:18px;border:2px solid var(--line);box-shadow:var(--shadow-sm);padding:14px;position:relative;transition:.15s}
+.foodcard:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.foodcard.empty-stock{opacity:.62}
+.foodcard .fc-top{display:flex;align-items:center;gap:10px}
+.foodcard .emoji{font-size:34px;line-height:1}
+.foodcard .fname{font-family:var(--font-disp);font-weight:700;font-size:18px}
+.foodcard .badges{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.foodcard .packs{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+.pill{font-size:12.5px;font-weight:800;padding:4px 9px;border-radius:10px;background:var(--cream2);color:var(--ink)}
+.foodcard .totals{margin-top:9px;font-size:12px;color:var(--ink-soft);font-weight:700}
+.foodcard .fc-actions{position:absolute;top:10px;right:10px;display:flex;gap:2px}
+.warn{color:var(--coral);font-weight:800}
+.foodcard .compound-parts{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;font-size:12px;font-weight:700;color:var(--ink)}
+.foodcard .compound-parts span{background:#F7EEF8;border:1.5px solid #E7D3EB;border-radius:8px;padding:2px 7px;white-space:nowrap}
+.foodcard .compound-parts b{font-size:10.5px}
+/* compound ingredient editor */
+.part-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;min-height:12px}
+.part-chip{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:800;background:#F3E6F5;border:2px solid #E3C8E8;color:#8A4E93;border-radius:10px;padding:4px 8px}
+.part-chip .pdel{cursor:pointer;color:var(--ink-soft);font-weight:800;margin-left:1px}
+.part-chip .pdel:hover{color:var(--coral)}
+
+/* ---------- plan layout ---------- */
+.plan-layout{display:grid;grid-template-columns:260px 1fr;gap:16px}
+.drawer{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);border:2px solid #fff;padding:16px;max-height:640px;overflow:auto}
+.drawer h3{font-family:var(--font-disp);margin:0 0 4px;font-size:16px}
+.drawer .hint{font-size:11.5px;color:var(--ink-soft);font-weight:700;margin-bottom:12px}
+.drawer .ing-group{margin-bottom:14px}
+.drawer .ing-name{font-weight:800;font-size:13px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.drawer .ing-name .alg-dot{font-size:11.5px;font-weight:800;cursor:default}
+.pack-chips{display:flex;flex-wrap:wrap;gap:6px}
+.pchip{cursor:grab;user-select:none;font-size:12.5px;font-weight:800;background:var(--butter-soft);border:2px solid var(--butter);border-radius:10px;padding:5px 8px;display:flex;align-items:center;gap:4px;transition:.12s}
+.pchip:hover{transform:translateY(-2px) rotate(-1.5deg);box-shadow:var(--shadow-sm)}
+.pchip:active{cursor:grabbing;transform:scale(1.08)}
+.pchip.custom{background:var(--sky-soft);border-color:var(--sky)}
+/* drawer filter */
+.drawer-filter{margin-bottom:14px;padding-bottom:14px;border-bottom:2px dashed var(--line)}
+.drawer-filter .search{position:relative;margin-bottom:8px}
+.drawer-filter .search .si{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;pointer-events:none;opacity:.7}
+.drawer-filter .search input{padding-left:32px;font-size:13px}
+.drawer-filter .search .clr{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:none;background:var(--cream2);color:var(--ink-soft);cursor:pointer;width:20px;height:20px;border-radius:50%;font-size:11px;font-weight:800;line-height:1;display:flex;align-items:center;justify-content:center}
+.drawer-filter .search .clr:hover{background:var(--peach-soft);color:var(--peach)}
+.drawer-filter select{font-size:12.5px;padding:8px 10px;margin-bottom:8px}
+.filter-chips{display:flex;flex-wrap:wrap;gap:5px}
+.fchip{cursor:pointer;user-select:none;font-size:11.5px;font-weight:800;border:2px solid var(--line);background:#fff;color:var(--ink-soft);border-radius:999px;padding:3px 10px;transition:.12s}
+.fchip:hover{transform:translateY(-1px)}
+.fchip.on{background:var(--peach-soft);border-color:var(--peach);color:var(--peach)}
+.filter-count{font-size:11px;color:var(--ink-soft);font-weight:700;margin-top:8px}
+
+/* ---------- modal ---------- */
+.overlay{position:fixed;inset:0;background:rgba(90,60,40,.42);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+.overlay.show{display:flex;animation:fade .2s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{background:var(--cream);border-radius:26px;box-shadow:0 20px 50px rgba(90,60,40,.35);width:100%;max-width:560px;max-height:88vh;overflow:auto;border:3px solid #fff;animation:pop .24s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{transform:scale(.9) translateY(10px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.modal .mhead{position:sticky;top:0;background:var(--cream);padding:18px 22px 10px;display:flex;align-items:center;justify-content:between;gap:10px;border-bottom:2px solid var(--line);z-index:2}
+.modal .mhead h2{font-family:var(--font-disp);font-size:21px;margin:0;flex:1}
+.modal .mbody{padding:16px 22px 22px}
+.mealblock{background:#fff;border-radius:16px;border:2px solid var(--line);padding:12px 14px;margin-bottom:12px}
+.mealblock .mb-head{display:flex;align-items:center;gap:8px;font-family:var(--font-disp);font-weight:700;font-size:16px;margin-bottom:8px}
+.entry{display:flex;align-items:center;gap:8px;background:var(--cream2);border-radius:11px;padding:6px 10px;margin-bottom:6px;font-weight:700;font-size:14px}
+.entry .g{margin-left:auto;color:var(--ink-soft);font-size:12.5px}
+.entry .del{cursor:pointer;color:var(--ink-soft);font-weight:800}
+.empty-meal{font-size:12.5px;color:var(--ink-soft);font-weight:700;padding:4px 2px}
+
+.field{margin-bottom:10px}
+.field label{display:block;font-size:12.5px;font-weight:800;color:var(--ink-soft);margin-bottom:4px}
+input,select{font-family:var(--font-body);font-weight:700;font-size:14px;color:var(--ink);border:2px solid var(--line);background:#fff;border-radius:12px;padding:9px 12px;width:100%;outline:none;transition:.14s}
+input:focus,select:focus{border-color:var(--peach)}
+.inline-form{background:var(--butter-soft);border:2px dashed var(--butter);border-radius:14px;padding:12px;margin-top:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end}
+.seg{display:flex;gap:6px;background:var(--cream2);padding:4px;border-radius:12px}
+.seg button{flex:1;border:none;background:transparent;font-family:var(--font-disp);font-weight:600;padding:7px;border-radius:9px;cursor:pointer;color:var(--ink-soft);font-size:13px}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:var(--shadow-sm)}
+.detect-badge{margin-top:6px;font-size:12px;font-weight:800;min-height:18px}
+.packrow{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:center}
+
+.disclaimer{margin-top:26px;text-align:center;font-size:12px;color:var(--ink-soft);font-weight:700;line-height:1.6}
+.disclaimer b{color:var(--coral)}
+.empty-state{text-align:center;padding:40px 20px;color:var(--ink-soft);font-weight:700}
+.empty-state .big{font-size:52px;margin-bottom:8px}
+
+@media(max-width:820px){
+  .plan-layout{grid-template-columns:1fr}
+  .drawer{max-height:none}
+  .tabs{width:100%;justify-content:center}
+  .cell{min-height:78px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="logo">🍼</div>
+      <div>
+        <h1>寶寶食光</h1>
+        <p>副食品紀錄 · 冰箱管理 · 預排食譜</p>
+      </div>
+    </div>
+    <nav class="tabs">
+      <button class="tab active" data-tab="record">📅 紀錄日曆</button>
+      <button class="tab" data-tab="fridge">🧊 我的冰箱</button>
+      <button class="tab" data-tab="plan">🍽️ 預排食譜</button>
+    </nav>
+  </header>
+
+  <main id="view"></main>
+
+  <p class="disclaimer">
+    🌱 過敏分級參考「培果教育 BaeGo」整理之《常見食物過敏風險分級》（原始資料：千葉友幸），<b>僅供參考、非醫療建議</b>，實際請依醫師與寶寶狀況為準。<br>
+    資料自動儲存在本機瀏覽器（localStorage）· <a href="#" data-action="reset" style="color:var(--peach);font-weight:800">重置範例資料</a>
+  </p>
+</div>
+
+<div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
+
+<script>
+/* ============ 常見副食品字典 ============
+   過敏程度依「培果教育 BaeGo」整理之《寶寶試敏不踩雷！常見食物過敏風險分級》圖
+   （原始資料：千葉友幸）：左兩欄=低、中間欄=中、右兩欄=高。 */
+const DICT = {
+  // ===== 五穀根莖類 =====
+  '小米':['🌾','五穀根莖類','low'],'藜麥':['🌾','五穀根莖類','low'],'藜':['🌾','五穀根莖類','low'],'西谷米':['⚪','五穀根莖類','low'],'樹薯粉':['🥔','五穀根莖類','low'],'高粱':['🌾','五穀根莖類','low'],
+  '白米':['🍚','五穀根莖類','mid'],'米':['🍚','五穀根莖類','mid'],'米糊':['🍚','五穀根莖類','mid'],'胚芽米':['🍚','五穀根莖類','mid'],'大麥':['🌾','五穀根莖類','mid'],'黑麥':['🌾','五穀根莖類','mid'],'燕麥':['🌾','五穀根莖類','mid'],'薏仁':['⚪','五穀根莖類','mid'],'馬鈴薯':['🥔','五穀根莖類','mid'],'地瓜':['🍠','五穀根莖類','mid'],'番薯':['🍠','五穀根莖類','mid'],'米餅':['🍘','五穀根莖類','mid'],
+  '糙米':['🌾','五穀根莖類','high'],'玉米':['🌽','五穀根莖類','high'],'玉米粉':['🌽','五穀根莖類','high'],'麵粉':['🌾','五穀根莖類','high'],'全麥麵粉':['🌾','五穀根莖類','high'],'糯米':['🍚','五穀根莖類','high'],'糯米粉':['🍚','五穀根莖類','high'],'栗子':['🌰','五穀根莖類','high'],'小麥胚芽':['🌾','五穀根莖類','high'],'小麥':['🌾','五穀根莖類','high'],'麵包':['🍞','五穀根莖類','high'],'吐司':['🍞','五穀根莖類','high'],'麵條':['🍜','五穀根莖類','high'],'麵':['🍜','五穀根莖類','high'],
+  // ===== 蔬菜類（低）=====
+  '小松菜':['🥬','蔬菜類','low'],'油菜':['🥬','蔬菜類','low'],'萵苣':['🥬','蔬菜類','low'],'美生菜':['🥬','蔬菜類','low'],'大頭菜':['🥬','蔬菜類','low'],'小白菜':['🥬','蔬菜類','low'],'大白菜':['🥬','蔬菜類','low'],'芥藍':['🥬','蔬菜類','low'],'高麗菜':['🥬','蔬菜類','low'],'芥菜':['🥬','蔬菜類','low'],'昆布':['🌿','蔬菜類','low'],'白蘿蔔':['🥬','蔬菜類','low'],'青江菜':['🥬','蔬菜類','low'],'紫蘇':['🌿','蔬菜類','low'],'油菜花':['🥬','蔬菜類','low'],'木耳':['🍄','蔬菜類','low'],'青椒':['🫑','蔬菜類','low'],'甜椒':['🫑','蔬菜類','low'],'蘆筍':['🥬','蔬菜類','low'],'茼蒿':['🥬','蔬菜類','low'],'花椰菜':['🥦','蔬菜類','low'],'白花椰':['🥦','蔬菜類','low'],'青花菜':['🥦','蔬菜類','low'],'西蘭花':['🥦','蔬菜類','low'],'蔥':['🌿','蔬菜類','low'],'南瓜':['🎃','蔬菜類','low'],'冬瓜':['🥒','蔬菜類','low'],'洋蔥':['🧅','蔬菜類','low'],'紅蘿蔔':['🥕','蔬菜類','low'],'胡蘿蔔':['🥕','蔬菜類','low'],'豆芽菜':['🌱','蔬菜類','low'],'菊花':['🌼','蔬菜類','low'],
+  // 蔬菜（中）
+  '秋葵':['🥬','蔬菜類','mid'],'辣椒':['🌶️','蔬菜類','mid'],'花豆':['🫘','蔬菜類','mid'],
+  // 蔬菜（高）
+  '韭菜':['🥬','蔬菜類','high'],'艾草':['🌿','蔬菜類','high'],'芹菜':['🥬','蔬菜類','high'],'大蒜':['🧄','蔬菜類','high'],'絲瓜':['🥒','蔬菜類','high'],'香菜':['🌿','蔬菜類','high'],'山蘇':['🥬','蔬菜類','high'],'蘑菇':['🍄','蔬菜類','high'],'蓮藕':['🪷','蔬菜類','high'],'香菇':['🍄','蔬菜類','high'],'蕨類':['🌿','蔬菜類','high'],'小黃瓜':['🥒','蔬菜類','high'],'牛番茄':['🍅','蔬菜類','high'],'番茄':['🍅','蔬菜類','high'],'蕃茄':['🍅','蔬菜類','high'],'菠菜':['🥬','蔬菜類','high'],'茄子':['🍆','蔬菜類','high'],'竹筍':['🎋','蔬菜類','high'],'牛蒡':['🥕','蔬菜類','high'],'芋頭':['🍠','蔬菜類','high'],'薑':['🫚','蔬菜類','high'],'山藥':['🍠','蔬菜類','high'],
+  // ===== 水果類 =====
+  '蘋果':['🍎','水果類','low'],'梅子':['🟢','水果類','low'],'葡萄':['🍇','水果類','low'],'甜桃':['🍑','水果類','low'],'白桃':['🍑','水果類','low'],'黃桃':['🍑','水果類','low'],'水蜜桃':['🍑','水果類','low'],'桃子':['🍑','水果類','low'],'龍眼':['🟤','水果類','low'],'紅棗':['🔴','水果類','low'],'甜柿':['🟠','水果類','low'],'柿子':['🟠','水果類','low'],'藍莓':['🫐','水果類','low'],'西洋梨':['🍐','水果類','low'],'水梨':['🍐','水果類','low'],'梨':['🍐','水果類','low'],
+  '草莓':['🍓','水果類','mid'],'枇杷':['🟠','水果類','mid'],'杏桃':['🍑','水果類','mid'],'李子':['🟣','水果類','mid'],'櫻桃':['🍒','水果類','mid'],
+  '哈密瓜':['🍈','水果類','high'],'小番茄':['🍅','水果類','high'],'西瓜':['🍉','水果類','high'],'榴槤':['🟡','水果類','high'],'香蕉':['🍌','水果類','high'],'石榴':['🔴','水果類','high'],'柚子':['🍊','水果類','high'],'木瓜':['🥭','水果類','high'],'奇異果':['🥝','水果類','high'],'芒果':['🥭','水果類','high'],'鳳梨':['🍍','水果類','high'],'橘子':['🍊','水果類','high'],'柳丁':['🍊','水果類','high'],'柑橘':['🍊','水果類','high'],'酪梨':['🥑','水果類','high'],'火龍果':['🍈','水果類','low'],
+  // ===== 豆蛋魚肉類（蛋白質，低）=====
+  '香魚':['🐟','豆蛋魚肉類','low'],'白鱈':['🐟','豆蛋魚肉類','low'],'河豚':['🐡','豆蛋魚肉類','low'],'鰻魚':['🐟','豆蛋魚肉類','low'],'鱒魚':['🐟','豆蛋魚肉類','low'],'鮭魚':['🐟','豆蛋魚肉類','low'],'沙鮻':['🐟','豆蛋魚肉類','low'],'鯛魚':['🐟','豆蛋魚肉類','low'],'黃花魚':['🐟','豆蛋魚肉類','low'],'白帶魚':['🐟','豆蛋魚肉類','low'],'石斑':['🐟','豆蛋魚肉類','low'],'馬肉':['🥩','豆蛋魚肉類','low'],'鹿肉':['🥩','豆蛋魚肉類','low'],'貽貝':['🦪','豆蛋魚肉類','low'],'豬肝':['🥩','豆蛋魚肉類','low'],
+  // 蛋白質（中）
+  '飛魚':['🐟','豆蛋魚肉類','mid'],'鱸魚':['🐟','豆蛋魚肉類','mid'],'鰤魚':['🐟','豆蛋魚肉類','mid'],'烏魚':['🐟','豆蛋魚肉類','mid'],'銀魚':['🐟','豆蛋魚肉類','mid'],'吻仔魚':['🐟','豆蛋魚肉類','mid'],'扇貝':['🦪','豆蛋魚肉類','mid'],'螺肉':['🐚','豆蛋魚肉類','mid'],'牛肉':['🥩','豆蛋魚肉類','mid'],'羊肉':['🥩','豆蛋魚肉類','mid'],'蛋黃':['🥚','豆蛋魚肉類','mid'],
+  // 蛋白質（高）
+  '比目魚':['🐟','豆蛋魚肉類','high'],'鰹魚':['🐟','豆蛋魚肉類','high'],'沙丁魚':['🐟','豆蛋魚肉類','high'],'鱈魚':['🐟','豆蛋魚肉類','high'],'土魠魚':['🐟','豆蛋魚肉類','high'],'章魚':['🐙','豆蛋魚肉類','high'],'蛤蜊':['🦪','豆蛋魚肉類','high'],'青蛤':['🦪','豆蛋魚肉類','high'],'雞肉':['🍗','豆蛋魚肉類','high'],'豬肉':['🥩','豆蛋魚肉類','high'],'櫻花蝦':['🦐','豆蛋魚肉類','high'],'鯖魚':['🐟','豆蛋魚肉類','high'],'秋刀魚':['🐟','豆蛋魚肉類','high'],'蝦':['🦐','豆蛋魚肉類','high'],'蝦子':['🦐','豆蛋魚肉類','high'],'蟹':['🦀','豆蛋魚肉類','high'],'螃蟹':['🦀','豆蛋魚肉類','high'],'牡蠣':['🦪','豆蛋魚肉類','high'],'鮭魚卵':['🔴','豆蛋魚肉類','high'],'海膽':['🌰','豆蛋魚肉類','high'],'鱈魚子':['🔴','豆蛋魚肉類','high'],'魚':['🐟','豆蛋魚肉類','mid'],
+  '蛋白':['🥚','豆蛋魚肉類','high'],'雞蛋':['🥚','豆蛋魚肉類','high'],'全蛋':['🥚','豆蛋魚肉類','high'],'蛋':['🥚','豆蛋魚肉類','high'],
+  '毛豆':['🫛','豆蛋魚肉類','high'],'黃豆':['🫘','豆蛋魚肉類','high'],'大豆':['🫘','豆蛋魚肉類','high'],'豆腐':['🧈','豆蛋魚肉類','high'],'豆漿':['🥛','豆蛋魚肉類','high'],'豆類':['🫘','豆蛋魚肉類','high'],'蕎麥':['🌾','豆蛋魚肉類','high'],
+  // ===== 乳品類 =====
+  '牛奶':['🥛','乳品類','high'],'起司':['🧀','乳品類','high'],'乳酪':['🧀','乳品類','high'],'優格':['🥛','乳品類','high'],'乳製品':['🥛','乳品類','high'],'母乳':['🍼','乳品類','low'],'配方奶':['🍼','乳品類','mid'],
+  // ===== 油脂堅果類 =====
+  '花生':['🥜','油脂堅果類','high'],'堅果':['🌰','油脂堅果類','high'],'芝麻':['⚫','油脂堅果類','high'],'葵花籽油':['🌻','油脂堅果類','high'],'玉米油':['🌽','油脂堅果類','high'],'橄欖油':['🫒','油脂堅果類','mid'],'菜籽油':['🫗','油脂堅果類','low'],'麻油':['🫗','油脂堅果類','low'],'亞麻仁油':['🫗','油脂堅果類','low'],'酪梨油':['🫗','油脂堅果類','mid'],
+  // ===== 調味 / 其他 =====
+  '醬油':['🫗','其他','low'],'味噌':['🥣','其他','low'],'鹽':['🧂','其他','low'],'黑糖':['🟤','其他','high'],'咖哩':['🍛','其他','high'],'可可粉':['🟤','其他','high']
+};
+const CATS = {
+  '五穀根莖類':{c:'#D99A17',bg:'var(--butter-soft)',emoji:'🌾'},
+  '蔬菜類':{c:'#3EA96A',bg:'var(--mint-soft)',emoji:'🥬'},
+  '水果類':{c:'#E8577A',bg:'var(--peach-soft)',emoji:'🍓'},
+  '豆蛋魚肉類':{c:'#E06B2E',bg:'#FFE9D6',emoji:'🍗'},
+  '乳品類':{c:'#2E9BC7',bg:'var(--sky-soft)',emoji:'🥛'},
+  '油脂堅果類':{c:'#A9723F',bg:'#F0E2D2',emoji:'🥜'},
+  '複合副食品':{c:'#B06FB0',bg:'#F3E6F5',emoji:'🍲'},
+  '其他':{c:'#8A7565',bg:'#EDE6DD',emoji:'🍽️'}
+};
+const COMPOUND_CAT='複合副食品';
+const CAT_LIST = Object.keys(CATS);
+const ALG = {high:{t:'高',dot:'🔴',c:'#E5484D'},mid:{t:'中',dot:'🟡',c:'#E8A21C'},low:{t:'低',dot:'🟢',c:'#3EA96A'}};
+const MEALS = [{k:'breakfast',t:'早餐',e:'🌅'},{k:'lunch',t:'午餐',e:'☀️'},{k:'dinner',t:'晚餐',e:'🌙'},{k:'snack',t:'點心',e:'🍪'}];
+const WD = ['日','一','二','三','四','五','六'];
+
+function detect(name){
+  name=(name||'').trim();
+  if(!name) return null;
+  if(DICT[name]) return {emoji:DICT[name][0],category:DICT[name][1],allergy:DICT[name][2]};
+  let best=null;
+  for(const k in DICT){ if(name.includes(k)||k.includes(name)){ if(!best||k.length>best.length) best=k; } }
+  if(best) return {emoji:DICT[best][0],category:DICT[best][1],allergy:DICT[best][2]};
+  return null;
+}
+function emojiFor(name,cat){ const d=detect(name); if(d) return d.emoji; return (CATS[cat]||CATS['其他']).emoji; }
+/* 複合副食品包：由多個成分名稱組成，過敏取最高、emoji 組合 */
+const RANK={low:0,mid:1,high:2};
+const partAllergy=n=>{ const d=detect(n); return d?d.allergy:'low'; };
+function compoundAllergy(parts){ let w='low'; (parts||[]).forEach(p=>{ if(RANK[partAllergy(p)]>RANK[w]) w=partAllergy(p); }); return w; }
+function compoundEmoji(parts){ const es=(parts||[]).slice(0,3).map(p=>{ const d=detect(p); return d?d.emoji:'🍽️'; }); return es.join('')||'🍲'; }
+
+/* ============ state ============ */
+const KEY='baby-food-v1';
+let uidc=Date.now();
+const uid=()=>'id'+(uidc++);
+function mkItem(name,packs){ const d=detect(name)||{emoji:'🍽️',category:'其他',allergy:'low'}; return {id:uid(),name,emoji:d.emoji,category:d.category,allergy:d.allergy,packs}; }
+function seed(){
+  return {fridge:[
+    mkItem('南瓜',[{size:50,count:2},{size:10,count:10}]),
+    mkItem('地瓜',[{size:15,count:8}]),
+    mkItem('蘋果',[{size:20,count:6}]),
+    mkItem('燕麥',[{size:10,count:12}]),
+    mkItem('紅蘿蔔',[{size:15,count:5}]),
+  ],records:{},plan:{}};
+}
+let state;
+try{ state=JSON.parse(localStorage.getItem(KEY)); }catch(e){ state=null; }
+if(!state||!state.fridge){ state=seed(); save(); }
+function save(){ localStorage.setItem(KEY,JSON.stringify(state)); }
+
+/* ui state */
+const now=new Date();
+let ui={tab:'record', rec:{y:now.getFullYear(),m:now.getMonth()}, plan:{y:now.getFullYear(),m:now.getMonth()},
+        modal:null, add:null, ff:null, df:{q:'',cat:'all',alg:'all'}};
+
+/* helpers */
+const pad=n=>String(n).padStart(2,'0');
+const dk=(y,m,d)=>`${y}-${pad(m+1)}-${pad(d)}`;
+const todayKey=dk(now.getFullYear(),now.getMonth(),now.getDate());
+const monthName=(y,m)=>`${y} 年 ${m+1} 月`;
+const totalG=it=>it.packs.reduce((s,p)=>s+p.size*p.count,0);
+const totalP=it=>it.packs.reduce((s,p)=>s+p.count,0);
+// 已排入預排食譜的包數（用來讓抽屜可排數量 = 庫存 − 已排）
+function plannedCount(id,size){ let n=0; for(const k in state.plan){ for(const c of state.plan[k]){ if(c.kind==='fridge'&&c.id===id&&c.size===size) n++; } } return n; }
+const availOf=(id,size,count)=>Math.max(0,count-plannedCount(id,size));
+const availPacks=it=>it.packs.reduce((s,p)=>s+availOf(it.id,p.size,p.count),0);
+function fridgeById(id){ return state.fridge.find(f=>f.id===id); }
+function deduct(id,size,n){ const it=fridgeById(id); if(!it) return; const g=it.packs.find(p=>p.size===size); if(!g) return; g.count-=n; if(g.count<=0) it.packs=it.packs.filter(p=>p!==g); }
+function restock(id,size,n){ const it=fridgeById(id); if(!it) return; const g=it.packs.find(p=>p.size===size); if(g) g.count+=n; else it.packs.push({size,count:n}); it.packs.sort((a,b)=>b.size-a.size); }
+
+/* ============ render root ============ */
+const view=document.getElementById('view');
+function render(){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===ui.tab));
+  if(ui.tab==='record') renderRecord();
+  else if(ui.tab==='fridge') renderFridge();
+  else renderPlan();
+  renderModal();
+}
+
+/* ---------- calendar builder ---------- */
+function calCells(y,m,builder,extraCellAttr,topRight){
+  const first=new Date(y,m,1).getDay();
+  const days=new Date(y,m+1,0).getDate();
+  let html='<div class="cal-head">'+WD.map((w,i)=>`<div class="${i===0?'sun':i===6?'sat':''}">${w}</div>`).join('')+'</div>';
+  html+='<div class="cal-grid">';
+  for(let i=0;i<first;i++) html+='<div class="cell empty"></div>';
+  for(let d=1;d<=days;d++){
+    const key=dk(y,m,d);
+    const today=key===todayKey?' today':'';
+    html+=`<div class="cell${today}" data-day="${key}" ${extraCellAttr?extraCellAttr(key):''}>
+      <div class="cell-head"><div class="dnum">${d}</div>${topRight?topRight(key):''}</div>${builder(key)}</div>`;
+  }
+  html+='</div>';
+  return html;
+}
+
+/* ============ TAB: 紀錄日曆 ============ */
+function renderRecord(){
+  const {y,m}=ui.rec;
+  const body=calCells(y,m,key=>{
+    const day=state.records[key]; if(!day) return '';
+    // 同品項跨餐加總（依名稱合併，克數相加）
+    const agg=new Map();
+    for(const meal of MEALS){ for(const e of (day[meal.k]||[])){
+      const g=agg.get(e.name);
+      if(g) g.grams+=e.grams; else agg.set(e.name,{emoji:e.emoji,name:e.name,grams:e.grams});
+    }}
+    const items=[...agg.values()];
+    let chips=items.slice(0,3).map(it=>`<div class="mini">${it.emoji}${it.name} ${it.grams}g</div>`).join('');
+    if(items.length>3) chips+=`<div class="more">還有 ${items.length-3} 項…</div>`;
+    return `<div class="chips">${chips}</div>`;
+  });
+  view.innerHTML=`<div class="panel">
+    <div class="row">
+      <div class="month-nav">
+        <button class="nav-btn" data-action="rec-prev">‹</button>
+        <div class="m">${monthName(y,m)}</div>
+        <button class="nav-btn" data-action="rec-next">›</button>
+      </div>
+      <button class="btn ghost sm" data-action="rec-today">今天</button>
+      <div class="spacer"></div>
+      <button class="btn primary" data-action="add-record">＋ 紀錄</button>
+    </div>
+    ${body}
+  </div>`;
+}
+
+/* ============ TAB: 我的冰箱 ============ */
+function renderFridge(){
+  const legend=CAT_LIST.filter(c=>c!=='其他').map(c=>`<span class="chip" style="background:${CATS[c].bg};color:${CATS[c].c}">${CATS[c].emoji} ${c}</span>`).join('')
+    +'　'+Object.keys(ALG).map(a=>`<span class="chip" style="background:#fff;border:2px solid ${ALG[a].c};color:${ALG[a].c}">${ALG[a].dot} 過敏${ALG[a].t}</span>`).join('');
+  let cards='';
+  if(!state.fridge.length){
+    cards=`<div class="empty-state"><div class="big">🧊</div>冰箱空空的～按右上角新增第一樣食材吧！</div>`;
+  }else{
+    const cardHTML=it=>{
+      const tp=totalP(it), tg=totalG(it);
+      const a=ALG[it.allergy];
+      const isC=it.parts&&it.parts.length;
+      const packs=it.packs.length?it.packs.map(p=>`<span class="pill">${p.size}g × ${p.count}</span>`).join(''):`<span class="pill warn">已用完</span>`;
+      const warn=tp===0?'':(tp<=2?`<span class="warn">· 快用完囉</span>`:'');
+      const cChip=isC?`<span class="chip" style="background:${CATS[COMPOUND_CAT].bg};color:${CATS[COMPOUND_CAT].c}">🍲 複合</span>`:'';
+      const partsLine=isC?`<div class="compound-parts">${it.parts.map(p=>{ const d=detect(p); const pa=d?ALG[d.allergy]:ALG.low; return `<span>${d?d.emoji:'🍽️'}${p} <b style="color:${pa.c}">${pa.dot}</b></span>`; }).join('')}</div>`:'';
+      return `<div class="foodcard${tp===0?' empty-stock':''}">
+        <div class="fc-actions">
+          <button class="icon-btn" data-action="edit-item" data-id="${it.id}" title="編輯">✏️</button>
+          <button class="icon-btn" data-action="del-item" data-id="${it.id}" title="刪除">🗑️</button>
+        </div>
+        <div class="fname">${isC?it.emoji+' ':''}${it.name}</div>
+        <div class="badges">
+          <span class="chip" style="background:#fff;border:2px solid ${a.c};color:${a.c}">${a.dot} 過敏${a.t}${isC?'（取最高）':''}</span>${cChip}
+        </div>
+        ${partsLine}
+        <div class="packs">${packs}</div>
+        <div class="totals">共 ${tg}g · ${tp} 包 ${warn}</div>
+      </div>`;
+    };
+    // 依分類分區塊
+    const cats=CAT_LIST.filter(c=>state.fridge.some(it=>it.category===c));
+    // 保底：把不在標準分類的也收進「其他」
+    state.fridge.forEach(it=>{ if(!CAT_LIST.includes(it.category) && !cats.includes('其他')) cats.push('其他'); });
+    cards=cats.map(c=>{
+      const items=state.fridge.filter(it=>it.category===c || (c==='其他' && !CAT_LIST.includes(it.category)));
+      if(!items.length) return '';
+      const meta=CATS[c]||CATS['其他'];
+      return `<div class="cat-section">
+        <div class="cat-title" style="color:${meta.c}"><span>${meta.emoji}</span> ${c} <span class="cat-count">${items.length}</span></div>
+        <div class="grid-cards">${items.map(cardHTML).join('')}</div>
+      </div>`;
+    }).join('');
+  }
+  view.innerHTML=`<div class="panel">
+    <div class="row">
+      <div><div class="month-nav"><div class="m" style="min-width:auto">🧊 我的冰箱</div></div></div>
+      <div class="spacer"></div>
+      <button class="btn ghost sm" data-action="refresh-cats" title="依最新字典重新判斷所有食材的分類與過敏程度">🔄 更新分級</button>
+      <button class="btn primary" data-action="add-item">＋ 新增食材</button>
+    </div>
+    <div class="legend">${legend}</div>
+    ${cards}
+  </div>`;
+}
+
+/* ============ TAB: 預排食譜 ============ */
+function renderPlan(){
+  const {y,m}=ui.plan;
+  // drawer: 每一實體包一張卡
+  const df=ui.df;
+  const stocked=state.fridge.filter(it=>availPacks(it)>0);
+  const q=(df.q||'').trim();
+  const filtered=stocked.filter(it=>
+    (df.cat==='all'||it.category===df.cat) &&
+    (df.alg==='all'||it.allergy===df.alg) &&
+    (!q||it.name.includes(q))
+  );
+  // 篩選器（只要冰箱有可排食材就顯示）
+  let filterUI='';
+  if(stocked.length){
+    const catsInStock=CAT_LIST.filter(c=>stocked.some(it=>it.category===c));
+    const active=(df.q||df.cat!=='all'||df.alg!=='all');
+    filterUI=`<div class="drawer-filter">
+      <div class="search"><span class="si">🔍</span>
+        <input type="text" placeholder="搜尋食材名稱…" value="${q}" data-action="df-q">
+        ${q?`<button class="clr" data-action="df-clear-q" title="清除">✕</button>`:''}</div>
+      <select data-action="df-cat">
+        <option value="all" ${df.cat==='all'?'selected':''}>🍱 全部分類</option>
+        ${catsInStock.map(c=>`<option value="${c}" ${df.cat===c?'selected':''}>${CATS[c].emoji} ${c}</option>`).join('')}
+      </select>
+      <div class="filter-chips">
+        <div class="fchip ${df.alg==='all'?'on':''}" data-action="df-alg" data-alg="all">全部程度</div>
+        ${Object.keys(ALG).map(k=>`<div class="fchip ${df.alg===k?'on':''}" data-action="df-alg" data-alg="${k}" ${df.alg===k?`style="background:${ALG[k].c}22;border-color:${ALG[k].c};color:${ALG[k].c}"`:''}>${ALG[k].dot} 過敏${ALG[k].t}</div>`).join('')}
+      </div>
+      <div class="filter-count">符合 ${filtered.length} / ${stocked.length} 樣${active?`　·　<a href="#" data-action="df-reset" style="color:var(--peach);font-weight:800">清除篩選</a>`:''}</div>
+    </div>`;
+  }
+  let drawer='';
+  if(!stocked.length){
+    drawer=`<div class="hint">${state.fridge.length?'食材都排完囉！刪掉日曆上的預排卡，小卡就會回到抽屜。':'冰箱還沒有食材～先到「🧊 我的冰箱」新增，或用下面的自訂卡。'}</div>`;
+  }else if(!filtered.length){
+    drawer=`<div class="hint">🔍 找不到符合條件的食材，換個關鍵字或篩選條件試試～</div>`;
+  }else{
+    drawer=filtered.map(it=>{
+      let chips='';
+      it.packs.forEach(p=>{ const av=availOf(it.id,p.size,p.count); for(let i=0;i<av;i++){
+        chips+=`<div class="pchip" draggable="true" data-drag='${JSON.stringify({kind:'fridge',id:it.id,name:it.name,emoji:it.emoji,size:p.size})}'>${it.emoji} ${p.size}g</div>`;
+      }});
+      const a=ALG[it.allergy]||ALG.low;
+      return `<div class="ing-group"><div class="ing-name">${it.emoji} ${it.name} <span class="alg-dot" style="color:${a.c}" title="過敏風險：${a.t}">${a.dot}${a.t}</span> <span style="color:var(--ink-soft);font-weight:700">(可排 ${availPacks(it)} 包)</span></div><div class="pack-chips">${chips}</div></div>`;
+    }).join('');
+  }
+  const body=calCells(y,m,key=>{
+    const arr=state.plan[key]||[];
+    let cards=arr.map((c,i)=>`<div class="plancard">${c.emoji} ${c.name} ${c.size}g<span class="x" data-action="del-plan" data-day="${key}" data-i="${i}">✕</span></div>`).join('');
+    return `<div class="chips" style="gap:4px">${cards}</div>`;
+  }, key=>`data-drop-date="${key}" class-hook`,
+  key=>{
+    const arr=state.plan[key]||[];
+    return arr.length?`<div class="torec"><button class="btn mint sm" data-action="plan-to-rec" data-day="${key}">▶ 轉紀錄</button></div>`:'';
+  });
+
+  view.innerHTML=`<div class="plan-layout">
+    <div class="drawer">
+      <h3>🥕 食材抽屜</h3>
+      <div class="hint">把小卡拖到右邊日期格＝排一包</div>
+      ${filterUI}
+      ${drawer}
+      <div class="ing-group"><div class="ing-name">✏️ 臨時自訂</div>
+        <div class="pack-chips"><div class="pchip custom" draggable="true" data-drag='${JSON.stringify({kind:'custom'})}'>＋ 自訂食材</div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="row">
+        <div class="month-nav">
+          <button class="nav-btn" data-action="plan-prev">‹</button>
+          <div class="m">${monthName(y,m)}</div>
+          <button class="nav-btn" data-action="plan-next">›</button>
+        </div>
+        <button class="btn ghost sm" data-action="plan-today">今天</button>
+      </div>
+      ${body}
+    </div>
+  </div>`;
+  // fix: drop cells need class
+  view.querySelectorAll('[data-drop-date]').forEach(c=>c.classList.add('drop-target'));
+}
+
+/* ============ MODALS ============ */
+const overlay=document.getElementById('overlay');
+const modalEl=document.getElementById('modal');
+function openModal(html){ modalEl.innerHTML=html; overlay.classList.add('show'); }
+function closeModal(){ overlay.classList.remove('show'); ui.modal=null; ui.add=null; ui.ff=null; }
+function renderModal(){
+  if(!ui.modal){ overlay.classList.remove('show'); return; }
+  if(ui.modal.type==='day') renderDayModal();
+  else if(ui.modal.type==='item') renderItemModal();
+  else if(ui.modal.type==='pickmeal') renderPickMeal();
+}
+
+/* ---- day record modal ---- */
+function renderDayModal(){
+  const key=ui.modal.key;
+  const day=state.records[key]||{};
+  const [Y,M,D]=key.split('-').map(Number);
+  let blocks=MEALS.map(meal=>{
+    const arr=day[meal.k]||[];
+    let entries=arr.length?arr.map((e,i)=>{
+      const a=ALG[e.allergy]||ALG.low;
+      return `<div class="entry">${e.emoji} ${e.name} <span style="color:${a.c}">${a.dot}</span>
+        <span class="g">${e.size}g × ${e.packs} = ${e.grams}g</span>
+        <span class="del" data-action="del-entry" data-key="${key}" data-meal="${meal.k}" data-i="${i}">✕</span></div>`;
+    }).join(''):`<div class="empty-meal">還沒有紀錄</div>`;
+    let form='';
+    if(ui.add && ui.add.meal===meal.k) form=addFormHTML(key,meal.k);
+    else form=`<button class="btn ghost sm" data-action="open-add" data-key="${key}" data-meal="${meal.k}" style="margin-top:4px">＋ 加食材</button>`;
+    return `<div class="mealblock"><div class="mb-head">${meal.e} ${meal.t}</div>${entries}${form}</div>`;
+  }).join('');
+  openModal(`<div class="mhead"><h2>📅 ${Y}/${M}/${D}（週${WD[new Date(Y,M-1,D).getDay()]}）</h2>
+    <button class="icon-btn" data-action="close" style="font-size:22px">✕</button></div>
+    <div class="mbody">${blocks}
+      <button class="btn primary" data-action="close-refresh" style="width:100%;justify-content:center;margin-top:6px">✓ 完成，回到日曆</button>
+    </div>`);
+}
+
+function addFormHTML(key,mealk){
+  const a=ui.add;
+  const src=a.source||'fridge';
+  const seg=`<div class="seg" style="margin-bottom:10px">
+    <button class="${src==='fridge'?'on':''}" data-action="add-src" data-src="fridge">🧊 冰箱挑選</button>
+    <button class="${src==='custom'?'on':''}" data-action="add-src" data-src="custom">✏️ 自行輸入</button></div>`;
+  let inner='';
+  if(src==='fridge'){
+    const items=state.fridge.filter(it=>totalP(it)>0);
+    if(!items.length){ inner=`<div class="empty-meal">冰箱沒有庫存了，改用「自行輸入」吧！</div>`; }
+    else{
+      const curId=a.itemId||items[0].id;
+      const it=fridgeById(curId)||items[0];
+      const sizes=it.packs;
+      const curSize=a.size||sizes[0].size;
+      const maxN=(sizes.find(p=>p.size===curSize)||sizes[0]).count;
+      inner=`
+        <div class="field"><label>食材</label>
+          <select data-action="add-item-sel">${items.map(x=>`<option value="${x.id}" ${x.id===curId?'selected':''}>${x.emoji} ${x.name}</option>`).join('')}</select></div>
+        <div class="grid3">
+          <div class="field" style="margin:0"><label>克重</label>
+            <select data-action="add-size-sel">${sizes.map(p=>`<option value="${p.size}" ${p.size===curSize?'selected':''}>${p.size}g（剩${p.count}包）</option>`).join('')}</select></div>
+          <div class="field" style="margin:0"><label>幾包</label>
+            <input type="number" min="1" max="${maxN}" value="${Math.min(a.packs||1,maxN)}" data-action="add-packs"></div>
+          <button class="btn primary" data-action="add-confirm" data-key="${key}" data-meal="${mealk}">加入</button>
+        </div>`;
+    }
+  }else{
+    const det=detect(a.cName);
+    const cat=a.cCat||(det?det.category:'其他');
+    const alg=a.cAllergy||(det?det.allergy:'low');
+    const badge=a.cName?(det?`<span style="color:${CATS[cat].c}">${CATS[cat].emoji} ${cat}</span> · <span style="color:${ALG[alg].c}">${ALG[alg].dot} 過敏${ALG[alg].t}</span> <span style="color:var(--ink-soft)">（自動判斷）</span>`:`<span style="color:var(--ink-soft)">字典查無，請自行選擇分類 👇</span>`):'';
+    inner=`
+      <div class="field"><label>食材名稱</label>
+        <input type="text" placeholder="例如：藜麥、豬肝…" value="${a.cName||''}" data-action="add-cname" id="cnameInput"></div>
+      <div class="detect-badge" id="detectBadge">${badge}</div>
+      <div class="grid2">
+        <div class="field"><label>分類</label>
+          <select data-action="add-ccat">${CAT_LIST.filter(c=>c!==COMPOUND_CAT).map(c=>`<option ${c===cat?'selected':''}>${c}</option>`).join('')}</select></div>
+        <div class="field"><label>過敏程度</label>
+          <select data-action="add-calg">${Object.keys(ALG).map(k=>`<option value="${k}" ${k===alg?'selected':''}>${ALG[k].dot} ${ALG[k].t}</option>`).join('')}</select></div>
+      </div>
+      <div class="grid3">
+        <div class="field" style="margin:0"><label>每包克重(g)</label><input type="number" min="1" value="${a.cSize||''}" placeholder="10" data-action="add-csize"></div>
+        <div class="field" style="margin:0"><label>幾包</label><input type="number" min="1" value="${a.cPacks||1}" data-action="add-cpacks"></div>
+        <button class="btn primary" data-action="add-confirm-custom" data-key="${key}" data-meal="${mealk}">加入</button>
+      </div>`;
+  }
+  return `<div class="inline-form">${seg}${inner}</div>`;
+}
+
+/* ---- fridge item modal (add/edit) ---- */
+function renderItemModal(){
+  const f=ui.ff;
+  const isC=!!f.compound;
+  const seg=`<div class="seg" style="margin-bottom:12px">
+    <button class="${!isC?'on':''}" data-action="ff-mode" data-mode="single">🥕 單一食材</button>
+    <button class="${isC?'on':''}" data-action="ff-mode" data-mode="compound">🍲 複合包</button></div>`;
+  let mid;
+  if(!isC){
+    const det=detect(f.name);
+    const cat=f.category||(det?det.category:'其他');
+    const alg=f.allergy||(det?det.allergy:'low');
+    const badge=f.name?(det?`<span style="color:${CATS[cat].c}">${CATS[cat].emoji} ${cat}</span> · <span style="color:${ALG[alg].c}">${ALG[alg].dot} 過敏${ALG[alg].t}</span> <span style="color:var(--ink-soft)">（自動判斷，可修改）</span>`:`<span style="color:var(--ink-soft)">字典查無，請自行選擇 👇</span>`):'';
+    mid=`
+      <div class="field"><label>食材名稱</label>
+        <input type="text" placeholder="例如：南瓜" value="${f.name||''}" data-action="ff-name" id="ffNameInput"></div>
+      <div class="detect-badge" id="ffBadge">${badge}</div>
+      <div class="grid2">
+        <div class="field"><label>分類</label>
+          <select data-action="ff-cat">${CAT_LIST.filter(c=>c!==COMPOUND_CAT).map(c=>`<option ${c===cat?'selected':''}>${c}</option>`).join('')}</select></div>
+        <div class="field"><label>過敏程度</label>
+          <select data-action="ff-alg">${Object.keys(ALG).map(k=>`<option value="${k}" ${k===alg?'selected':''}>${ALG[k].dot} ${ALG[k].t}</option>`).join('')}</select></div>
+      </div>`;
+  }else{
+    const parts=f.parts||[];
+    const cAlg=compoundAllergy(parts), cA=ALG[cAlg];
+    const partChips=parts.length?parts.map((p,i)=>{
+      const d=detect(p), pa=d?ALG[d.allergy]:ALG.low;
+      return `<span class="part-chip">${d?d.emoji:'🍽️'} ${p} <b style="color:${pa.c}">${pa.dot}</b><span class="pdel" data-action="ff-delpart" data-i="${i}">✕</span></span>`;
+    }).join(''):`<span style="color:var(--ink-soft);font-weight:700;font-size:12.5px">還沒有成分，先在下面加入 👇</span>`;
+    const autoName=parts.join('');
+    mid=`
+      <label style="font-size:12.5px;font-weight:800;color:var(--ink-soft)">食材成分（過敏風險自動取最高）</label>
+      <div class="part-chips">${partChips}</div>
+      <div class="grid3" style="margin-top:8px">
+        <div class="field" style="margin:0;grid-column:span 2"><label>加入成分（可打 Enter）</label>
+          <input type="text" placeholder="例如：蘋果" value="${f.partInput||''}" data-action="ff-partinput" id="ffPartInput"></div>
+        <button class="btn ghost" data-action="ff-addpart">＋ 加入</button>
+      </div>
+      <div class="detect-badge">${parts.length?`<span style="color:${CATS[COMPOUND_CAT].c}">${CATS[COMPOUND_CAT].emoji} 複合副食品</span> · <span style="color:${cA.c}">${cA.dot} 過敏${cA.t}</span> <span style="color:var(--ink-soft)">（依成分最高）</span>`:'<span style="color:var(--ink-soft)">至少加入 2 種成分</span>'}</div>
+      <div class="field"><label>包裝名稱</label>
+        <input type="text" placeholder="${autoName||'例如：蘋果南瓜'}" value="${f.name||''}" data-action="ff-name" id="ffNameInput">
+        <div class="hint" style="margin:4px 0 0">留空會自動用成分組合：${autoName||'（先加成分）'}</div></div>`;
+  }
+  const rows=f.packs.map((p,i)=>`<div class="packrow">
+    <div class="field" style="margin:0"><label>每包克重(g)</label><input type="number" min="1" value="${p.size||''}" placeholder="50" data-action="ff-size" data-i="${i}"></div>
+    <div class="field" style="margin:0"><label>包數</label><input type="number" min="1" value="${p.count||''}" placeholder="2" data-action="ff-count" data-i="${i}"></div>
+    <button class="icon-btn" data-action="ff-delrow" data-i="${i}" style="font-size:18px;margin-bottom:8px">🗑️</button>
+  </div>`).join('');
+  const headEmoji=isC?compoundEmoji(f.parts):(f.emoji||'🍽️');
+  openModal(`<div class="mhead"><h2>${headEmoji} ${f.id?'編輯食材':'新增食材'}</h2>
+    <button class="icon-btn" data-action="close" style="font-size:22px">✕</button></div>
+    <div class="mbody">
+      ${seg}
+      ${mid}
+      <label style="font-size:12.5px;font-weight:800;color:var(--ink-soft);display:block;margin-top:12px">分裝規格（可多種克重，例：50g×2、10g×10）</label>
+      <div style="margin-top:8px">${rows}</div>
+      <button class="btn ghost sm" data-action="ff-addrow">＋ 再加一種克重</button>
+      <div style="margin-top:18px;display:flex;gap:10px">
+        <button class="btn primary" data-action="ff-save" style="flex:1">💾 儲存</button>
+        <button class="btn ghost" data-action="close">取消</button>
+      </div>
+    </div>`);
+}
+
+/* ---- pick meal (plan -> record) ---- */
+function renderPickMeal(){
+  const key=ui.modal.key;
+  openModal(`<div class="mhead"><h2>🍽️ 這天的預排放到哪一餐？</h2>
+    <button class="icon-btn" data-action="close" style="font-size:22px">✕</button></div>
+    <div class="mbody">
+      <p style="font-weight:700;color:var(--ink-soft);margin-top:0">存成紀錄後，冰庫存會自動扣掉對應的包數。</p>
+      <div class="grid2">
+        ${MEALS.map(me=>`<button class="btn ghost" data-action="confirm-plan-meal" data-key="${key}" data-meal="${me.k}" style="justify-content:center;padding:16px;font-size:16px">${me.e} ${me.t}</button>`).join('')}
+      </div>
+    </div>`);
+}
+
+/* ============ events ============ */
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-action],[data-tab]');
+  if(e.target.closest('.tab')){ ui.tab=e.target.closest('.tab').dataset.tab; render(); return; }
+  if(!t) return;
+  const a=t.dataset.action; const id=t.dataset.id; const key=t.dataset.key||t.dataset.day; const meal=t.dataset.meal;
+  switch(a){
+    case 'close': { const wasDay=ui.modal&&ui.modal.type==='day'; closeModal(); if(wasDay) renderRecord(); break; }
+    case 'close-refresh': closeModal(); renderRecord(); break;
+    case 'reset': if(confirm('要清空並還原成範例資料嗎？')){ state=seed(); save(); closeModal(); render(); } e.preventDefault(); break;
+    // record calendar
+    case 'rec-prev': shiftMonth(ui.rec,-1); renderRecord(); break;
+    case 'rec-next': shiftMonth(ui.rec,1); renderRecord(); break;
+    case 'rec-today': ui.rec={y:now.getFullYear(),m:now.getMonth()}; renderRecord(); break;
+    case 'add-record': ui.modal={type:'day',key:todayKey}; renderModal(); break;
+    // plan calendar
+    case 'plan-prev': shiftMonth(ui.plan,-1); renderPlan(); break;
+    case 'plan-next': shiftMonth(ui.plan,1); renderPlan(); break;
+    case 'plan-today': ui.plan={y:now.getFullYear(),m:now.getMonth()}; renderPlan(); break;
+    case 'del-plan': { const arr=state.plan[t.dataset.day]; if(arr){ arr.splice(+t.dataset.i,1); if(!arr.length) delete state.plan[t.dataset.day]; save(); renderPlan(); } break; }
+    case 'plan-to-rec': ui.modal={type:'pickmeal',key:t.dataset.day}; renderModal(); break;
+    case 'confirm-plan-meal': planToRecord(key,meal); break;
+    // drawer filter
+    case 'df-alg': ui.df.alg=t.dataset.alg; renderPlan(); break;
+    case 'df-clear-q': ui.df.q=''; renderPlan(); break;
+    case 'df-reset': ui.df={q:'',cat:'all',alg:'all'}; renderPlan(); e.preventDefault(); break;
+    // fridge
+    case 'add-item': ui.ff={emoji:'🍽️',packs:[{size:'',count:''}],compound:false,parts:[]}; ui.modal={type:'item'}; renderModal(); break;
+    case 'edit-item': { const it=fridgeById(id); ui.ff={id:it.id,name:it.name,emoji:it.emoji,category:it.category,allergy:it.allergy,packs:it.packs.map(p=>({...p})),compound:!!(it.parts&&it.parts.length),parts:it.parts?[...it.parts]:[]}; ui.modal={type:'item'}; renderModal(); break; }
+    case 'del-item': if(confirm('確定刪除此食材？')){ state.fridge=state.fridge.filter(f=>f.id!==id); save(); renderFridge(); } break;
+    case 'refresh-cats': { if(confirm('依最新字典重新判斷所有食材的分類與過敏程度？（庫存包數不變）')){ let n=0; state.fridge.forEach(it=>{ if(it.parts&&it.parts.length){ it.category=COMPOUND_CAT; it.allergy=compoundAllergy(it.parts); it.emoji=compoundEmoji(it.parts); n++; } else { const d=detect(it.name); if(d){ it.category=d.category; it.allergy=d.allergy; it.emoji=d.emoji; n++; } } }); save(); renderFridge(); alert('已更新 '+n+' 樣食材的分級 ✅'); } break; }
+    case 'ff-mode': { ui.ff.compound=(t.dataset.mode==='compound'); if(ui.ff.compound&&!ui.ff.parts) ui.ff.parts=[]; renderItemModal(); break; }
+    case 'ff-addpart': addPart(); break;
+    case 'ff-delpart': ui.ff.parts.splice(+t.dataset.i,1); renderItemModal(); break;
+    case 'ff-addrow': ui.ff.packs.push({size:'',count:''}); renderItemModal(); break;
+    case 'ff-delrow': ui.ff.packs.splice(+t.dataset.i,1); if(!ui.ff.packs.length) ui.ff.packs.push({size:'',count:''}); renderItemModal(); break;
+    case 'ff-save': saveItem(); break;
+    // day modal add
+    case 'open-add': ui.add={meal,source:'fridge'}; renderDayModal(); break;
+    case 'add-src': ui.add.source=t.dataset.src; renderDayModal(); break;
+    case 'add-item-sel': break; // handled by change
+    case 'add-confirm': confirmAddFridge(key,meal); break;
+    case 'add-confirm-custom': confirmAddCustom(key,meal); break;
+    case 'del-entry': delEntry(t.dataset.key,meal,+t.dataset.i); break;
+  }
+});
+document.addEventListener('change',e=>{
+  const t=e.target; const a=t.dataset.action; if(!a) return;
+  if(a==='add-item-sel'){ ui.add.itemId=t.value; ui.add.size=null; ui.add.packs=1; renderDayModal(); }
+  else if(a==='add-size-sel'){ ui.add.size=+t.value; renderDayModal(); }
+  else if(a==='add-packs'){ ui.add.packs=+t.value; }
+  else if(a==='add-ccat'){ ui.add.cCat=t.value; }
+  else if(a==='add-calg'){ ui.add.cAllergy=t.value; }
+  else if(a==='add-csize'){ ui.add.cSize=+t.value; }
+  else if(a==='add-cpacks'){ ui.add.cPacks=+t.value; }
+  else if(a==='ff-cat'){ ui.ff.category=t.value; }
+  else if(a==='ff-alg'){ ui.ff.allergy=t.value; }
+  else if(a==='ff-size'){ ui.ff.packs[+t.dataset.i].size=+t.value; }
+  else if(a==='ff-count'){ ui.ff.packs[+t.dataset.i].count=+t.value; }
+  else if(a==='df-cat'){ ui.df.cat=t.value; renderPlan(); }
+});
+document.addEventListener('input',e=>{
+  const t=e.target; const a=t.dataset.action;
+  if(a==='add-cname'){ ui.add.cName=t.value; ui.add.cCat=null; ui.add.cAllergy=null; updateDetectBadge('detectBadge',t.value); syncSelects(t.value); }
+  else if(a==='ff-name'){ ui.ff.name=t.value; if(!ui.ff.compound){ ui.ff.category=null; ui.ff.allergy=null; const d=detect(t.value); ui.ff.emoji=d?d.emoji:'🍽️'; updateDetectBadge('ffBadge',t.value); syncFFSelects(t.value); } }
+  else if(a==='ff-partinput'){ ui.ff.partInput=t.value; }
+  else if(a==='add-packs'){ ui.add.packs=+t.value; }
+  else if(a==='df-q'){
+    ui.df.q=t.value; renderPlan();
+    const el=document.querySelector('[data-action="df-q"]');
+    if(el){ el.focus(); const v=el.value; el.value=''; el.value=v; }
+  }
+});
+function updateDetectBadge(elId,name){
+  const el=document.getElementById(elId); if(!el) return;
+  const d=detect(name);
+  if(!name){ el.innerHTML=''; return; }
+  if(d) el.innerHTML=`<span style="color:${CATS[d.category].c}">${CATS[d.category].emoji} ${d.category}</span> · <span style="color:${ALG[d.allergy].c}">${ALG[d.allergy].dot} 過敏${ALG[d.allergy].t}</span> <span style="color:var(--ink-soft)">（自動判斷，可改）</span>`;
+  else el.innerHTML=`<span style="color:var(--ink-soft)">字典查無，請自行選擇 👇</span>`;
+}
+function syncSelects(name){ const d=detect(name); if(!d) return; const cat=document.querySelector('[data-action="add-ccat"]'); const alg=document.querySelector('[data-action="add-calg"]'); if(cat) cat.value=d.category; if(alg) alg.value=d.allergy; }
+function syncFFSelects(name){ const d=detect(name); if(!d) return; const cat=document.querySelector('[data-action="ff-cat"]'); const alg=document.querySelector('[data-action="ff-alg"]'); if(cat) cat.value=d.category; if(alg) alg.value=d.allergy; }
+
+function shiftMonth(o,d){ let m=o.m+d,y=o.y; if(m<0){m=11;y--;} if(m>11){m=0;y++;} o.y=y;o.m=m; }
+
+/* ---- add entry (fridge) ---- */
+function ensureDay(key){ if(!state.records[key]) state.records[key]={}; }
+function confirmAddFridge(key,mealk){
+  const a=ui.add;
+  const items=state.fridge.filter(it=>totalP(it)>0);
+  const it=fridgeById(a.itemId)||items[0]; if(!it){ return; }
+  const size=a.size||it.packs[0].size;
+  const grp=it.packs.find(p=>p.size===size)||it.packs[0];
+  let n=Math.max(1,Math.min(+a.packs||1,grp.count));
+  ensureDay(key); if(!state.records[key][mealk]) state.records[key][mealk]=[];
+  state.records[key][mealk].push({id:uid(),name:it.name,emoji:it.emoji,size:grp.size,packs:n,grams:grp.size*n,category:it.category,allergy:it.allergy,fromFridgeId:it.id});
+  deduct(it.id,grp.size,n);
+  ui.add=null; save(); renderDayModal();
+}
+function confirmAddCustom(key,mealk){
+  const a=ui.add;
+  const name=(a.cName||'').trim(); if(!name){ alert('請輸入食材名稱'); return; }
+  const size=+a.cSize; if(!size||size<=0){ alert('請輸入每包克重'); return; }
+  const packs=Math.max(1,+a.cPacks||1);
+  const det=detect(name);
+  const cat=a.cCat||(det?det.category:'其他');
+  const alg=a.cAllergy||(det?det.allergy:'low');
+  ensureDay(key); if(!state.records[key][mealk]) state.records[key][mealk]=[];
+  state.records[key][mealk].push({id:uid(),name,emoji:emojiFor(name,cat),size,packs,grams:size*packs,category:cat,allergy:alg});
+  ui.add=null; save(); renderDayModal();
+}
+function delEntry(key,mealk,i){
+  const arr=state.records[key]&&state.records[key][mealk]; if(!arr) return;
+  const e=arr[i];
+  if(e && e.fromFridgeId && fridgeById(e.fromFridgeId)) restock(e.fromFridgeId,e.size,e.packs); // 退回冰箱
+  arr.splice(i,1);
+  if(!arr.length) delete state.records[key][mealk];
+  if(!Object.keys(state.records[key]).length) delete state.records[key];
+  save(); renderDayModal();
+}
+
+/* ---- save fridge item ---- */
+function saveItem(){
+  const f=ui.ff;
+  // 分裝規格（共用）
+  const packs=f.packs.filter(p=>+p.size>0 && +p.count>0).map(p=>({size:+p.size,count:+p.count}));
+  const merged={}; packs.forEach(p=>{ merged[p.size]=(merged[p.size]||0)+p.count; });
+  const packArr=Object.keys(merged).map(s=>({size:+s,count:merged[s]})).sort((a,b)=>b.size-a.size);
+  if(!packArr.length){ alert('請至少填一組「克重 × 包數」'); return; }
+
+  if(f.compound){
+    const parts=(f.parts||[]).map(p=>(p||'').trim()).filter(Boolean);
+    if(parts.length<2){ alert('複合包請至少加入 2 種食材成分'); return; }
+    const name=(f.name||'').trim()||parts.join('');
+    const emoji=compoundEmoji(parts), alg=compoundAllergy(parts);
+    if(f.id){ const it=fridgeById(f.id); it.name=name; it.category=COMPOUND_CAT; it.allergy=alg; it.emoji=emoji; it.parts=parts; it.packs=packArr; }
+    else state.fridge.push({id:uid(),name,emoji,category:COMPOUND_CAT,allergy:alg,parts,packs:packArr});
+  }else{
+    const name=(f.name||'').trim(); if(!name){ alert('請輸入食材名稱'); return; }
+    const det=detect(name);
+    const cat=f.category||(det?det.category:'其他');
+    const alg=f.allergy||(det?det.allergy:'low');
+    const emoji=(det?det.emoji:'🍽️');
+    if(f.id){ const it=fridgeById(f.id); it.name=name; it.category=cat; it.allergy=alg; it.emoji=emoji; delete it.parts; it.packs=packArr; }
+    else state.fridge.push({id:uid(),name,emoji,category:cat,allergy:alg,packs:packArr});
+  }
+  save(); closeModal(); ui.tab='fridge'; render();
+}
+function addPart(){ const v=(ui.ff.partInput||'').trim(); if(!v) return; if(!ui.ff.parts) ui.ff.parts=[]; ui.ff.parts.push(v); ui.ff.partInput=''; renderItemModal(); }
+
+/* ---- plan -> record ---- */
+function planToRecord(key,mealk){
+  const arr=state.plan[key]||[];
+  ensureDay(key); if(!state.records[key][mealk]) state.records[key][mealk]=[];
+  arr.forEach(c=>{
+    if(c.kind==='fridge' && fridgeById(c.id)){
+      const it=fridgeById(c.id); const grp=it.packs.find(p=>p.size===c.size);
+      if(grp && grp.count>0){ deduct(c.id,c.size,1); state.records[key][mealk].push({id:uid(),name:c.name,emoji:c.emoji,size:c.size,packs:1,grams:c.size,category:it.category,allergy:it.allergy,fromFridgeId:c.id}); return; }
+    }
+    // 冰箱沒庫存或自訂 → 直接記錄不扣
+    const det=detect(c.name);
+    state.records[key][mealk].push({id:uid(),name:c.name,emoji:c.emoji,size:c.size,packs:1,grams:c.size,category:det?det.category:'其他',allergy:det?det.allergy:'low'});
+  });
+  delete state.plan[key];
+  save(); closeModal(); ui.tab='record'; ui.rec={y:+key.split('-')[0],m:+key.split('-')[1]-1}; render();
+}
+
+/* ============ drag & drop (預排) ============ */
+let dragData=null;
+document.addEventListener('dragstart',e=>{
+  const el=e.target.closest('[data-drag]'); if(!el) return;
+  dragData=JSON.parse(el.dataset.drag);
+  e.dataTransfer.effectAllowed='copy';
+  try{ e.dataTransfer.setData('text/plain','x'); }catch(_){}
+});
+document.addEventListener('dragover',e=>{
+  const cell=e.target.closest('[data-drop-date]'); if(cell){ e.preventDefault(); cell.classList.add('dragover'); }
+});
+document.addEventListener('dragleave',e=>{
+  const cell=e.target.closest('[data-drop-date]'); if(cell) cell.classList.remove('dragover');
+});
+document.addEventListener('drop',e=>{
+  const cell=e.target.closest('[data-drop-date]'); if(!cell||!dragData) return;
+  e.preventDefault(); cell.classList.remove('dragover');
+  const key=cell.dataset.dropDate;
+  let card;
+  if(dragData.kind==='custom'){
+    const name=(prompt('自訂食材名稱：')||'').trim(); if(!name){ dragData=null; return; }
+    const size=parseInt(prompt('這一包幾克(g)？','10'),10); if(!size||size<=0){ dragData=null; return; }
+    const det=detect(name);
+    card={kind:'custom',name,emoji:det?det.emoji:'🍽️',size};
+  }else{
+    // 不可超過庫存可排數量
+    const it=fridgeById(dragData.id);
+    const grp=it&&it.packs.find(p=>p.size===dragData.size);
+    if(!grp || availOf(dragData.id,dragData.size,grp.count)<=0){ dragData=null; return; }
+    card={kind:'fridge',id:dragData.id,name:dragData.name,emoji:dragData.emoji,size:dragData.size};
+  }
+  if(!state.plan[key]) state.plan[key]=[];
+  state.plan[key].push(card);
+  dragData=null; save(); renderPlan();
+});
+
+/* Enter 加入複合成分 */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter' && e.target.dataset && e.target.dataset.action==='ff-partinput'){ e.preventDefault(); addPart(); }
+});
+
+/* overlay click to close */
+overlay.addEventListener('click',e=>{ if(e.target===overlay){ const wasDay=ui.modal&&ui.modal.type==='day'; closeModal(); if(wasDay) renderRecord(); } });
+
+/* open day from calendar cell (record tab) */
+document.addEventListener('click',e=>{
+  if(ui.tab!=='record') return;
+  const cell=e.target.closest('.cell[data-day]'); if(!cell||cell.classList.contains('empty')) return;
+  if(e.target.closest('[data-action]')) return;
+  ui.modal={type:'day',key:cell.dataset.day}; renderModal();
+});
+
+render();
+</script>
+</body>
+</html>
