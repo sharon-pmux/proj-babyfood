@@ -187,6 +187,19 @@ input:focus,select:focus{border-color:var(--peach)}
 .detect-badge{margin-top:6px;font-size:12px;font-weight:800;min-height:18px}
 .packrow{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:center}
 
+/* ---------- stats modal ---------- */
+.stat-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.stat-tile{background:#fff;border:2px solid var(--line);border-radius:16px;padding:12px 8px;text-align:center}
+.stat-tile .num{font-family:var(--font-disp);font-weight:700;font-size:26px;color:var(--coral);line-height:1}
+.stat-tile .lbl{font-size:11.5px;font-weight:800;color:var(--ink-soft);margin-top:4px}
+.stat-allergy{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.stat-cat{margin-top:16px}
+.stat-cat .sc-head{font-family:var(--font-disp);font-weight:700;font-size:15px;display:flex;align-items:center;gap:7px;padding-bottom:6px;border-bottom:2px dashed var(--line)}
+.stat-cat .sc-count{font-size:11.5px;background:#fff;border:2px solid currentColor;border-radius:999px;padding:0 8px;font-weight:800}
+.stat-food{display:flex;align-items:center;gap:7px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:7px 11px;margin-top:7px;font-size:14px}
+.stat-food .sf-name{font-weight:800}
+.stat-food .sf-meta{margin-left:auto;color:var(--ink-soft);font-size:11.5px;font-weight:700;text-align:right;line-height:1.35;white-space:nowrap}
+
 .disclaimer{margin-top:26px;text-align:center;font-size:12px;color:var(--ink-soft);font-weight:700;line-height:1.6}
 .disclaimer b{color:var(--coral)}
 .empty-state{text-align:center;padding:40px 20px;color:var(--ink-soft);font-weight:700}
@@ -214,6 +227,7 @@ input:focus,select:focus{border-color:var(--peach)}
       <button class="tab active" data-tab="record">📅 紀錄日曆</button>
       <button class="tab" data-tab="fridge">🧊 我的冰箱</button>
       <button class="tab" data-tab="plan">🍽️ 預排食譜</button>
+      <button class="tab" data-tab="stats">📊 統計</button>
     </nav>
   </header>
 
@@ -315,7 +329,7 @@ function save(){ localStorage.setItem(KEY,JSON.stringify(state)); }
 /* ui state */
 const now=new Date();
 let ui={tab:'record', rec:{y:now.getFullYear(),m:now.getMonth()}, plan:{y:now.getFullYear(),m:now.getMonth()},
-        modal:null, add:null, ff:null, df:{q:'',cat:'all',alg:'all'}};
+        modal:null, add:null, ff:null, df:{q:'',cat:'all',alg:'all'}, statsScope:'all'};
 
 /* helpers */
 const pad=n=>String(n).padStart(2,'0');
@@ -338,7 +352,8 @@ function render(){
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===ui.tab));
   if(ui.tab==='record') renderRecord();
   else if(ui.tab==='fridge') renderFridge();
-  else renderPlan();
+  else if(ui.tab==='plan') renderPlan();
+  else renderStats();
   renderModal();
 }
 
@@ -697,6 +712,66 @@ function renderPickMeal(){
     </div>`);
 }
 
+/* ---- 歷史統計 ---- */
+function computeStats(scope){
+  const foods=new Map(); let totalGrams=0,totalEntries=0; const days=new Set();
+  for(const key in state.records){
+    if(scope!=='all'){ const [Y,M]=key.split('-').map(Number); if(Y!==scope.y||M!==scope.m+1) continue; }
+    const day=state.records[key]; let dayHas=false;
+    for(const meal of MEALS){ for(const e of (day[meal.k]||[])){
+      dayHas=true; totalEntries++; totalGrams+=e.grams;
+      let f=foods.get(e.name);
+      if(!f){ f={name:e.name,emoji:e.emoji,category:e.category||'其他',allergy:e.allergy||'low',count:0,grams:0,first:key,last:key}; foods.set(e.name,f); }
+      f.count++; f.grams+=e.grams;
+      if(key<f.first) f.first=key; if(key>f.last) f.last=key;
+    }}
+    if(dayHas) days.add(key);
+  }
+  return {foods:[...foods.values()],totalGrams,totalEntries,days:days.size};
+}
+function renderStats(){
+  const scope=ui.statsScope==='month'?{y:ui.rec.y,m:ui.rec.m}:'all';
+  const S=computeStats(scope);
+  const seg=`<div class="seg" style="margin-bottom:14px">
+    <button class="${ui.statsScope!=='month'?'on':''}" data-action="stats-scope" data-scope="all">🗂️ 全部歷史</button>
+    <button class="${ui.statsScope==='month'?'on':''}" data-action="stats-scope" data-scope="month">📅 ${monthName(ui.rec.y,ui.rec.m)}</button></div>`;
+  let bodyInner;
+  if(!S.foods.length){
+    bodyInner=`<div class="empty-state"><div class="big">🍽️</div>${scope==='all'?'還沒有任何紀錄，快去日曆記下第一餐吧！':'這個月還沒有紀錄喔～'}</div>`;
+  }else{
+    const algCount={low:0,mid:0,high:0}; S.foods.forEach(f=>{ algCount[f.allergy]=(algCount[f.allergy]||0)+1; });
+    const algChips=Object.keys(ALG).map(k=>`<span class="chip" style="background:#fff;border:2px solid ${ALG[k].c};color:${ALG[k].c}">${ALG[k].dot} 過敏${ALG[k].t} ${algCount[k]||0} 種</span>`).join('');
+    const sorted=[...S.foods].sort((a,b)=>b.count-a.count||b.grams-a.grams);
+    const cats=CAT_LIST.filter(c=>sorted.some(f=>f.category===c));
+    sorted.forEach(f=>{ if(!CAT_LIST.includes(f.category)&&!cats.includes('其他')) cats.push('其他'); });
+    const catBlocks=cats.map(c=>{
+      const items=sorted.filter(f=>f.category===c||(c==='其他'&&!CAT_LIST.includes(f.category)));
+      if(!items.length) return '';
+      const meta=CATS[c]||CATS['其他'];
+      const rows=items.map(f=>{
+        const a=ALG[f.allergy]||ALG.low; const p=f.first.split('-');
+        return `<div class="stat-food"><span>${f.emoji}</span><span class="sf-name">${f.name}</span><span style="color:${a.c}">${a.dot}</span>
+          <span class="sf-meta">吃過 ${f.count} 次 · 共 ${f.grams}g<br>首次 ${+p[1]}/${+p[2]}</span></div>`;
+      }).join('');
+      return `<div class="stat-cat"><div class="sc-head" style="color:${meta.c}"><span>${meta.emoji}</span> ${c} <span class="sc-count">${items.length} 種</span></div>${rows}</div>`;
+    }).join('');
+    bodyInner=`
+      <div class="stat-tiles">
+        <div class="stat-tile"><div class="num">${S.foods.length}</div><div class="lbl">吃過種類</div></div>
+        <div class="stat-tile"><div class="num">${S.days}</div><div class="lbl">有紀錄天數</div></div>
+        <div class="stat-tile"><div class="num">${S.totalGrams}</div><div class="lbl">累積總量(g)</div></div>
+      </div>
+      <div class="stat-allergy">${algChips}</div>
+      ${catBlocks}`;
+  }
+  view.innerHTML=`<div class="panel">
+    <div class="row" style="margin-bottom:12px">
+      <div class="month-nav"><div class="m" style="min-width:auto">📊 歷史統計</div></div>
+    </div>
+    ${seg}${bodyInner}
+  </div>`;
+}
+
 /* ============ events ============ */
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-action],[data-tab]');
@@ -712,6 +787,7 @@ document.addEventListener('click',e=>{
     case 'rec-next': shiftMonth(ui.rec,1); renderRecord(); break;
     case 'rec-today': ui.rec={y:now.getFullYear(),m:now.getMonth()}; renderRecord(); break;
     case 'add-record': ui.modal={type:'day',key:todayKey}; renderModal(); break;
+    case 'stats-scope': ui.statsScope=t.dataset.scope; renderStats(); break;
     // plan calendar
     case 'plan-prev': shiftMonth(ui.plan,-1); renderPlan(); break;
     case 'plan-next': shiftMonth(ui.plan,1); renderPlan(); break;
