@@ -235,11 +235,15 @@ input:focus,select:focus{border-color:var(--peach)}
 
   <p class="disclaimer">
     🌱 過敏分級參考「培果教育 BaeGo」整理之《常見食物過敏風險分級》（原始資料：千葉友幸），<b>僅供參考、非醫療建議</b>，實際請依醫師與寶寶狀況為準。<br>
-    資料自動儲存在本機瀏覽器（localStorage）· <a href="#" data-action="reset" style="color:var(--peach);font-weight:800">重置範例資料</a>
+    資料儲存在本機瀏覽器（localStorage）·
+    <a href="#" data-action="export-data" style="color:var(--mint);font-weight:800">⬇️ 匯出備份</a> ·
+    <a href="#" data-action="import-data" style="color:var(--sky);font-weight:800">⬆️ 匯入還原</a> ·
+    <a href="#" data-action="reset" style="color:var(--peach);font-weight:800">重置範例資料</a>
   </p>
 </div>
 
 <div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
+<input type="file" id="importFile" accept="application/json,.json" style="display:none">
 
 <script>
 /* ============ 常見副食品字典 ============
@@ -782,6 +786,8 @@ document.addEventListener('click',e=>{
     case 'close': { const wasDay=ui.modal&&ui.modal.type==='day'; closeModal(); if(wasDay) renderRecord(); break; }
     case 'close-refresh': closeModal(); renderRecord(); break;
     case 'reset': if(confirm('要清空並還原成範例資料嗎？')){ state=seed(); save(); closeModal(); render(); } e.preventDefault(); break;
+    case 'export-data': exportData(); e.preventDefault(); break;
+    case 'import-data': document.getElementById('importFile').click(); e.preventDefault(); break;
     // record calendar
     case 'rec-prev': shiftMonth(ui.rec,-1); renderRecord(); break;
     case 'rec-next': shiftMonth(ui.rec,1); renderRecord(); break;
@@ -993,6 +999,36 @@ document.addEventListener('drop',e=>{
 /* Enter 加入複合成分 */
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter' && e.target.dataset && e.target.dataset.action==='ff-partinput'){ e.preventDefault(); addPart(); }
+});
+
+/* ============ 匯出 / 匯入 本機檔案 ============ */
+function exportData(){
+  const json=JSON.stringify(state,null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const d=new Date();
+  const stamp=`${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}`;
+  const a=document.createElement('a');
+  a.href=url; a.download=`寶寶食光-備份-${stamp}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+const importFileEl=document.getElementById('importFile');
+importFileEl.addEventListener('change',e=>{
+  const file=e.target.files&&e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(reader.result);
+      if(!data||typeof data!=='object'||!Array.isArray(data.fridge)){ alert('檔案格式不正確，請選擇本 App 匯出的備份 JSON。'); return; }
+      if(!confirm('匯入會「覆蓋」目前所有資料（冰箱／紀錄／預排）。\n建議先匯出備份，確定要匯入嗎？')) return;
+      state={fridge:data.fridge||[], records:data.records||{}, plan:data.plan||{}};
+      save(); render();
+      alert('匯入完成 ✅');
+    }catch(err){ alert('無法讀取檔案：'+err.message); }
+    finally{ importFileEl.value=''; }
+  };
+  reader.readAsText(file);
 });
 
 /* overlay click to close */
