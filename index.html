@@ -394,9 +394,11 @@ function renderRecord(){
 function renderFridge(){
   const legend=CAT_LIST.filter(c=>c!=='其他').map(c=>`<span class="chip" style="background:${CATS[c].bg};color:${CATS[c].c}">${CATS[c].emoji} ${c}</span>`).join('')
     +'　'+Object.keys(ALG).map(a=>`<span class="chip" style="background:#fff;border:2px solid ${ALG[a].c};color:${ALG[a].c}">${ALG[a].dot} 過敏${ALG[a].t}</span>`).join('');
+  // 只顯示還有庫存的食材（已用完的隱藏，資料仍保留以便退回冰箱時復現）
+  const stock=state.fridge.filter(it=>totalP(it)>0);
   let cards='';
-  if(!state.fridge.length){
-    cards=`<div class="empty-state"><div class="big">🧊</div>冰箱空空的～按右上角新增第一樣食材吧！</div>`;
+  if(!stock.length){
+    cards=`<div class="empty-state"><div class="big">🧊</div>${state.fridge.length?'食材都用完囉～新增或補貨一下吧！':'冰箱空空的～按右上角新增第一樣食材吧！'}</div>`;
   }else{
     const cardHTML=it=>{
       const tp=totalP(it), tg=totalG(it);
@@ -421,11 +423,11 @@ function renderFridge(){
       </div>`;
     };
     // 依分類分區塊
-    const cats=CAT_LIST.filter(c=>state.fridge.some(it=>it.category===c));
+    const cats=CAT_LIST.filter(c=>stock.some(it=>it.category===c));
     // 保底：把不在標準分類的也收進「其他」
-    state.fridge.forEach(it=>{ if(!CAT_LIST.includes(it.category) && !cats.includes('其他')) cats.push('其他'); });
+    stock.forEach(it=>{ if(!CAT_LIST.includes(it.category) && !cats.includes('其他')) cats.push('其他'); });
     cards=cats.map(c=>{
-      const items=state.fridge.filter(it=>it.category===c || (c==='其他' && !CAT_LIST.includes(it.category)));
+      const items=stock.filter(it=>it.category===c || (c==='其他' && !CAT_LIST.includes(it.category)));
       if(!items.length) return '';
       const meta=CATS[c]||CATS['其他'];
       return `<div class="cat-section">
@@ -825,13 +827,18 @@ function saveItem(){
   const packArr=Object.keys(merged).map(s=>({size:+s,count:merged[s]})).sort((a,b)=>b.size-a.size);
   if(!packArr.length){ alert('請至少填一組「克重 × 包數」'); return; }
 
+  let mergedName=null; // 併入現有卡片時記錄，用於提示
   if(f.compound){
     const parts=(f.parts||[]).map(p=>(p||'').trim()).filter(Boolean);
     if(parts.length<2){ alert('複合包請至少加入 2 種食材成分'); return; }
     const name=(f.name||'').trim()||parts.join('');
     const emoji=compoundEmoji(parts), alg=compoundAllergy(parts);
     if(f.id){ const it=fridgeById(f.id); it.name=name; it.category=COMPOUND_CAT; it.allergy=alg; it.emoji=emoji; it.parts=parts; it.packs=packArr; }
-    else state.fridge.push({id:uid(),name,emoji,category:COMPOUND_CAT,allergy:alg,parts,packs:packArr});
+    else{
+      const ex=state.fridge.find(x=>x.name===name && x.parts && x.parts.length);
+      if(ex){ mergePacksInto(ex,packArr); ex.parts=parts; ex.emoji=emoji; ex.allergy=alg; ex.category=COMPOUND_CAT; mergedName=name; }
+      else state.fridge.push({id:uid(),name,emoji,category:COMPOUND_CAT,allergy:alg,parts,packs:packArr});
+    }
   }else{
     const name=(f.name||'').trim(); if(!name){ alert('請輸入食材名稱'); return; }
     const det=detect(name);
@@ -839,9 +846,18 @@ function saveItem(){
     const alg=f.allergy||(det?det.allergy:'low');
     const emoji=(det?det.emoji:'🍽️');
     if(f.id){ const it=fridgeById(f.id); it.name=name; it.category=cat; it.allergy=alg; it.emoji=emoji; delete it.parts; it.packs=packArr; }
-    else state.fridge.push({id:uid(),name,emoji,category:cat,allergy:alg,packs:packArr});
+    else{
+      const ex=state.fridge.find(x=>x.name===name && !(x.parts && x.parts.length));
+      if(ex){ mergePacksInto(ex,packArr); ex.category=cat; ex.allergy=alg; ex.emoji=emoji; mergedName=name; }
+      else state.fridge.push({id:uid(),name,emoji,category:cat,allergy:alg,packs:packArr});
+    }
   }
   save(); closeModal(); ui.tab='fridge'; render();
+  if(mergedName) alert(`冰箱已有「${mergedName}」，已把包數併入現有卡片 ✅`);
+}
+function mergePacksInto(it,packArr){
+  const m={}; it.packs.forEach(p=>m[p.size]=(m[p.size]||0)+p.count); packArr.forEach(p=>m[p.size]=(m[p.size]||0)+p.count);
+  it.packs=Object.keys(m).map(s=>({size:+s,count:m[s]})).sort((a,b)=>b.size-a.size);
 }
 function addPart(){ const v=(ui.ff.partInput||'').trim(); if(!v) return; if(!ui.ff.parts) ui.ff.parts=[]; ui.ff.parts.push(v); ui.ff.partInput=''; renderItemModal(); }
 
