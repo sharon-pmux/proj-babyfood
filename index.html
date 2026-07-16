@@ -846,11 +846,6 @@ document.addEventListener('input',e=>{
   else if(a==='ff-name'){ ui.ff.name=t.value; if(!ui.ff.compound){ ui.ff.category=null; ui.ff.allergy=null; const d=detect(t.value); ui.ff.emoji=d?d.emoji:'🍽️'; updateDetectBadge('ffBadge',t.value); syncFFSelects(t.value); } }
   else if(a==='ff-partinput'){ ui.ff.partInput=t.value; }
   else if(a==='add-packs'){ ui.add.packs=+t.value; }
-  else if(a==='df-q'){
-    ui.df.q=t.value; renderPlan();
-    const el=document.querySelector('[data-action="df-q"]');
-    if(el){ el.focus(); const v=el.value; el.value=''; el.value=v; }
-  }
 });
 function updateDetectBadge(elId,name){
   const el=document.getElementById(elId); if(!el) return;
@@ -999,6 +994,13 @@ document.addEventListener('drop',e=>{
 /* Enter 加入複合成分 */
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter' && e.target.dataset && e.target.dataset.action==='ff-partinput'){ e.preventDefault(); addPart(); }
+  /* 食材抽屜搜尋：按 Enter 才搜尋，不即時過濾 */
+  else if(e.key==='Enter' && e.target.dataset && e.target.dataset.action==='df-q'){
+    e.preventDefault();
+    ui.df.q=e.target.value; renderPlan();
+    const el=document.querySelector('[data-action="df-q"]');
+    if(el){ el.focus(); const v=el.value; el.value=''; el.value=v; }
+  }
 });
 
 /* ============ 匯出 / 匯入 本機檔案 ============ */
